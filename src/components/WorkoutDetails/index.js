@@ -6,24 +6,26 @@ import { useAuthContext } from "../../hooks/AuthHook";
 
 const WorkoutDetails = ({ workout }) => {
   const { dispatch } = useWorkoutContext();
-  const { user } = useAuthContext();
+  const { user, baseURI } = useAuthContext();
 
   const handleClick = async () => {
     if (!user) return;
 
-    const res = await fetch(
-      "https://workout-api-f3kn.onrender.com/api/workouts/" + workout._id,
-      {
+    let url;
+    if (baseURI) url = `${baseURI}/api/workouts/`;
+
+    if (url) {
+      const res = await fetch(url + workout._id, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${user.token}`,
         },
-      }
-    );
-    const json = await res.json();
+      });
+      const json = await res.json();
 
-    if (res.ok) {
-      dispatch({ type: type.DELETE_WORKOUT, payload: json });
+      if (res.ok) {
+        dispatch({ type: type.DELETE_WORKOUT, payload: json });
+      }
     }
   };
 

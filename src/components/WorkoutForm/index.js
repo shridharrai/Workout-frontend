@@ -6,7 +6,7 @@ import "./index.css";
 
 const WorkoutForm = () => {
   const { dispatch } = useWorkoutContext();
-  const { user } = useAuthContext();
+  const { user, baseURI } = useAuthContext();
 
   const [title, setTitle] = useState("");
   const [load, setLoad] = useState("");
@@ -23,17 +23,17 @@ const WorkoutForm = () => {
     }
 
     const workout = { title, load, reps };
-    const res = await fetch(
-      "https://workout-api-f3kn.onrender.com/api/workouts",
-      {
-        method: "POST",
-        body: JSON.stringify(workout),
-        headers: {
-          "Content-type": "application/json",
-          Authorization: `Bearer ${user.token}`,
-        },
-      }
-    );
+    let url;
+    if (baseURI) url = `${baseURI}/api/workouts`;
+
+    const res = await fetch(url, {
+      method: "POST",
+      body: JSON.stringify(workout),
+      headers: {
+        "Content-type": "application/json",
+        Authorization: `Bearer ${user.token}`,
+      },
+    });
     const json = await res.json();
 
     if (!res.ok) {

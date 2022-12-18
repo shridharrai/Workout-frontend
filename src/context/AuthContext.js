@@ -7,11 +7,18 @@ export const AuthReducer = (state, action) => {
   switch (action.type) {
     case type.LOGIN:
       return {
+        ...state,
         user: action.payload,
       };
     case type.LOGOUT:
       return {
+        ...state,
         user: null,
+      };
+    case type.SET_BASE_URI:
+      return {
+        ...state,
+        baseURI: action.payload,
       };
     default:
       return state;
@@ -21,11 +28,14 @@ export const AuthReducer = (state, action) => {
 export const AuthContextProvider = ({ children }) => {
   const [state, dispatch] = useReducer(AuthReducer, {
     user: null,
+    baseURI: null,
   });
 
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("user"));
+    const baseURI = process.env.REACT_APP_BASE_URI;
+    if (baseURI) dispatch({ type: type.SET_BASE_URI, payload: baseURI });
 
+    const user = JSON.parse(localStorage.getItem("user"));
     if (user) dispatch({ type: type.LOGIN, payload: user });
   }, []);
 

@@ -8,18 +8,18 @@ import "./index.css";
 
 const Home = () => {
   const { workouts, dispatch } = useWorkoutContext();
-  const { user } = useAuthContext();
+  const { user, baseURI } = useAuthContext();
 
   useEffect(() => {
+    let url;
+    if (baseURI) url = `${baseURI}/api/workouts`;
+
     const fetchWorkouts = async () => {
-      const res = await fetch(
-        "https://workout-api-f3kn.onrender.com/api/workouts",
-        {
-          headers: {
-            Authorization: `Bearer ${user.token}`,
-          },
-        }
-      );
+      const res = await fetch(url, {
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+        },
+      });
       const json = await res.json();
 
       if (res.ok) {
@@ -27,7 +27,7 @@ const Home = () => {
       }
     };
 
-    if (user) fetchWorkouts();
+    if (user && baseURI) fetchWorkouts();
   }, [dispatch]);
 
   return (

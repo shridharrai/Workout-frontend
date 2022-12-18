@@ -5,20 +5,20 @@ import { useAuthContext } from "./AuthHook";
 export const useLogIn = () => {
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(null);
-  const { dispatch } = useAuthContext();
+  const { dispatch, baseURI } = useAuthContext();
 
   const logIn = async (email, password) => {
     setIsLoading(true);
     setError(null);
 
-    const response = await fetch(
-      "https://workout-api-f3kn.onrender.com/api/user/login",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      }
-    );
+    let url;
+    if (baseURI) url = `${baseURI}/api/user/login`;
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
     const json = await response.json();
 
     if (!response.ok) setError(json.error);
